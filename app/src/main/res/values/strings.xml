@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Space Combat Simulation</string>
+    <string name="butSP">Single Player</string>
+    <string name="butMP">Multi Player</string>
+    <string name="butSettings">Settings</string>
+    <string name="butExit">Exit</string>
+</resources>
