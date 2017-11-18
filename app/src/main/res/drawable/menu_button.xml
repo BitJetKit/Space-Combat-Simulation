@@ -10,6 +10,7 @@
 
     <item android:state_focused="true">
         <shape android:shape="rectangle">
+            <stroke android:width="1dip" android:color="@color/colorButton3" />
             <corners android:radius="5dip" />
             <solid android:color="#58857e" />
         </shape>
@@ -17,6 +18,7 @@
 
     <item android:state_enabled="false">
         <shape android:shape="rectangle">
+            <stroke android:width="1dip" android:color="@color/colorButton3" />
             <corners android:radius="5dip" />
             <gradient android:angle="-90" android:startColor="@color/colorButtonDisabled1" android:endColor="@color/colorButtonDisabled2" />
         </shape>
