@@ -39,7 +39,7 @@ public class MenuBackground extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         Log.d("DEBUG","onSizeChanged");
         width = w; height = h;
-
+        Main.height = h;
         //background1 = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         //background2 = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
     }
@@ -50,7 +50,7 @@ public class MenuBackground extends View {
 
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.FILL);
-        paint.setShadowLayer(10,0,0, Color.BLUE);
+        paint.setShadowLayer(8,0,0, Color.BLUE);
 
         //moveBackground.run();
     }
