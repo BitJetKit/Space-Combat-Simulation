@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:state_checked="true" >
+    <item android:state_checked="true">
         <shape android:shape="rectangle">
-            <size android:width="10dp"/>
             <corners android:radius="10dp" />
             <stroke android:width="1dip" android:color="@color/colorButton3" />
             <gradient android:angle="-90" android:startColor="@color/colorButtonPressed1" android:endColor="@color/colorButtonPressed2" />
         </shape>
     </item>
 
-    <item android:state_checked="false" >
+    <item android:state_checked="false">
         <shape android:shape="rectangle">
-            <size android:width="1dip"/>
-            <corners android:radius="10dip" />
-            <stroke android:width="1dip" android:color="@color/colorButton3" />
+            <corners android:radius="10dp" />
+            <stroke android:width="1dp" android:color="@color/colorButton3" />
             <gradient android:angle="-90" android:startColor="@color/colorButtonPressed1" android:endColor="@color/colorButtonPressed1" />
         </shape>
     </item>

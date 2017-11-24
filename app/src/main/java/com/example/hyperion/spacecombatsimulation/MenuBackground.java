@@ -9,16 +9,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.SurfaceView;
 import android.view.View;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class MenuBackground extends View {
+public class MenuBackground extends SurfaceView {
 
     private Paint paint = new Paint();
     private int width, height;
     private int random(int min, int max) { return ThreadLocalRandom.current().nextInt(min, max); }
     //private Bitmap background1, background2;
+
 
     public MenuBackground(Context context) {
         super(context);
@@ -37,9 +39,9 @@ public class MenuBackground extends View {
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        Log.d("DEBUG","onSizeChanged");
         width = w; height = h;
         Main.height = h;
+
         //background1 = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         //background2 = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
     }

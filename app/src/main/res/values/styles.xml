@@ -7,6 +7,10 @@
         <item name="android:textColor">@color/colorText</item>
         <item name="android:background">@drawable/background_gradient</item>
 
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">true</item>
+
         <item name="android:windowFullscreen">true</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
@@ -35,7 +39,6 @@
     </style>
 
     <style name="Label" parent="@android:style/Widget.TextView">
-        <item name="android:backgroundTint">@android:color/transparent</item>
         <item name="android:textColor">@color/colorButtonText</item>
         <item name="android:textSize">16sp</item>
         <item name="android:shadowColor">#677fa9</item>
@@ -43,19 +46,22 @@
         <item name="android:shadowDy">2</item>
     </style>
 
-    <style name="Switch" parent="@android:style/Widget.Material.SeekBar">
+    <style name="Switch" parent="@android:style/Widget.Material.Button.Toggle">
+        <item name="android:track">@drawable/menu_switch_track</item>
+        <item name="android:thumb">@drawable/menu_switch_thumb</item>
         <item name="android:textColor">@color/colorText</item>
-        <item name="android:color">@color/colorAccent</item>
         <item name="android:backgroundTint">@android:color/transparent</item>
+        <item name="android:color">@color/colorAccent</item>
         <item name="android:textSize">13sp</item>
+        <item name="android:textAllCaps">false</item>
         <item name="android:shadowColor">#677fa9</item>
         <item name="android:shadowRadius">14</item>
         <item name="android:shadowDy">2</item>
+        <item name="android:switchMinWidth">40dp</item>
     </style>
 
     <style name="SeekBar" parent="@android:style/Widget.Material.SeekBar">
         <item name="android:textColor">@color/colorButtonText</item>
-        <item name="android:backgroundTint">@android:color/transparent</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">18sp</item>
         <item name="android:shadowColor">#677fa9</item>

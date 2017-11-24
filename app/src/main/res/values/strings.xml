@@ -17,4 +17,9 @@
     <string name="indicators">Indicators</string>
     <string name="battery">Battery</string>
     <string name="clock">Clock</string>
+
+    <string name="fire">Fire</string>
+    <string name="shield">Shield</string>
+    <string name="hull">Hull</string>
+    <string name="energy">Energy</string>
 </resources>
