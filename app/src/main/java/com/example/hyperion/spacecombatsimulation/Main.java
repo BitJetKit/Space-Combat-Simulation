@@ -1,7 +1,6 @@
 package com.example.hyperion.spacecombatsimulation;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,11 +39,14 @@ public class Main extends Activity {
             int resID = getResources().getIdentifier("menu", "raw", getPackageName());
             int musicVolume = mSettings.getInt("Music volume", 50);
             mediaPlayer = MediaPlayer.create(this, resID);
+            mediaPlayer.setLooping(true);
 
             if (mSettings.getBoolean("Music", true)) {
                 mediaPlayer.setVolume((float) musicVolume / 100, (float) musicVolume / 100);
-                mediaPlayer.setLooping(true);
                 mediaPlayer.start();
+            } else {
+                mediaPlayer.start();
+                mediaPlayer.pause();
             }
         }
 
