@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    tools:context="com.example.hyperion.spacecombatsimulation.StartGame">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:fadingEdgeLength="20dp"
+        android:fitsSystemWindows="true"
+        android:requiresFadingEdge="horizontal|vertical"
+        app:layout_constraintBottom_toTopOf="@+id/butBack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:listitem="@layout/select_ship_entry" />
+
+    <Button
+        android:id="@+id/butBack"
+        style="@style/Button"
+        android:layout_width="140dip"
+        android:layout_height="50dip"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="16dp"
+        android:onClick="button_click"
+        android:text="@string/back"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/butSelect"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+
+    <Button
+        android:id="@+id/butSelect"
+        style="@style/Button"
+        android:layout_width="140dip"
+        android:layout_height="50dip"
+        android:layout_marginStart="16dp"
+        android:enabled="false"
+        android:onClick="button_click"
+        android:text="@string/select"
+        app:layout_constraintBottom_toBottomOf="@+id/butBack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/butBack"
+        app:layout_constraintTop_toTopOf="@+id/butBack"
+        app:layout_constraintVertical_bias="0.0" />
+
+</android.support.constraint.ConstraintLayout>

@@ -16,8 +16,6 @@ import android.widget.ToggleButton;
 
 public class Settings extends Activity {
 
-    static boolean active = false;
-
     private SharedPreferences mSettings;
     private SeekBar musicBar, soundBar;
     private Switch musicSwitch, soundSwitch;
@@ -33,7 +31,6 @@ public class Settings extends Activity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
-        active = true;
 
         mSettings = getSharedPreferences("Settings", Context.MODE_PRIVATE);
 
@@ -110,12 +107,13 @@ public class Settings extends Activity {
             Main.mediaPlayer.pause();
         }
 
-        active = false;
+        Main.active = true;
         finish();
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d("DEBUG","OnKeyDown");
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
             back();
         }
@@ -123,6 +121,7 @@ public class Settings extends Activity {
     }
 
     public void button_click(View v) {
+
         switch (v.getId()) {
 
             case R.id.butBack:
@@ -140,7 +139,7 @@ public class Settings extends Activity {
                 editor.putBoolean("Vertical", modeToggle.isChecked());
                 editor.apply();
 
-                active = false;
+                Main.active = true;
                 finish();
                 break;
         }

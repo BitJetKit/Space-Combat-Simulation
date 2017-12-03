@@ -4,12 +4,12 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:hardwareAccelerated="true">
+        android:theme="@style/AppTheme">
 
         <activity android:name=".Main">
             <intent-filter>
@@ -19,10 +19,16 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".Settings"
-            android:theme="@style/Transparent">
-        </activity>
+        <activity
+            android:name=".Settings"
+            android:theme="@style/Transparent" />
 
+        <activity
+            android:name=".StartGame"
+            android:theme="@style/Transparent" />
+
+        <activity
+            android:name=".Game" />
     </application>
 
 </manifest>

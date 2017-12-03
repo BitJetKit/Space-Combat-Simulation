@@ -43,7 +43,6 @@ public class MenuBackground extends SurfaceView implements Callback  {
 
         Log.d("Call","init");
         getHolder().addCallback(this);
-        //this.setLayerType(SurfaceView.LAYER_TYPE_SOFTWARE, null);
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.FILL);
         paint.setShadowLayer(8,0,0, Color.BLUE);
@@ -102,17 +101,16 @@ public class MenuBackground extends SurfaceView implements Callback  {
     protected void doDraw(Canvas canvas) {
 
         postInvalidate();
-        Log.d("Call","doDraw");
 
         for (int i = 0; i < starCount; i++) {
             if (starX[i] <= 1) {
                 starX[i] = width * 10 + 30;
                 starY[i] = random(1, height * 10);
-                starZ[i] = random(1, 20);
+                starZ[i] = Math.max(1, Math.min(20, starZ[i] + random(-3, 3)));
                 starSize[i] = random(1, 3);
                 starColor[i] = random(1, starBrightness);
             } else {
-                starX[i] -= starZ[i];
+                starX[i] -= starZ[i] * 1.5;
             }
         }
     }

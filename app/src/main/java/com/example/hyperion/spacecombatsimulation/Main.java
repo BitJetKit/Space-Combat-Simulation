@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -18,7 +20,7 @@ public class Main extends Activity {
 
     static MediaPlayer mediaPlayer;
     static int height;
-    static boolean started = false;
+    static boolean started = false, active = true;
 
 
     @Override
@@ -67,18 +69,11 @@ public class Main extends Activity {
         super.onResume();
         Log.d("POWER","Resume");
 
-        if (Settings.active) {
-            butSP.setAlpha(0); butMP.setAlpha(0); butSettings.setAlpha(0); butExit.setAlpha(0);
-            title.setY(-height / 3);
-            Log.d("Height",""+height);
-            Log.d("POWER","Resume");
-        } else {
-            butSP.animate().alpha(1).setDuration(200).start();
-            butMP.animate().alpha(1).setDuration(400).start();
-            butSettings.animate().alpha(1).setDuration(600).start();
-            butExit.animate().alpha(1).setDuration(800).start();
-            title.animate().translationY(0).setDuration(600).start();
-        }
+        butSP.setAlpha(0); butMP.setAlpha(0); butSettings.setAlpha(0); butExit.setAlpha(0);
+        title.setY(-height / 3);
+
+        if (active)
+            animateIn();
     }
 
     protected void onDestroy() {
@@ -88,10 +83,19 @@ public class Main extends Activity {
 
     public void button_click(View v) {
 
+        active = false;
+
+        // Animate out
+        butSP.animate().alpha(0).setDuration(200).start();
+        butMP.animate().alpha(0).setDuration(400).start();
+        butSettings.animate().alpha(0).setDuration(600).start();
+        butExit.animate().alpha(0).setDuration(800).start();
+        title.animate().translationY(-butSP.getY() / 1.2f).setDuration(600).start();
+
         switch (v.getId()) {
 
             case R.id.butSP:
-
+                startActivity(new Intent(this, StartGame.class));
                 break;
 
             case R.id.butMP:
@@ -100,17 +104,27 @@ public class Main extends Activity {
 
             case R.id.butSettings:
                 startActivity(new Intent(this, Settings.class));
-                butSP.animate().alpha(0).setDuration(200).start();
-                butMP.animate().alpha(0).setDuration(400).start();
-                butSettings.animate().alpha(0).setDuration(600).start();
-                butExit.animate().alpha(0).setDuration(800).start();
-                title.animate().translationY(-butSP.getY() / 1.2f).setDuration(600).start();
                 break;
 
             case R.id.butExit:
-                finish();
-                System.exit(0);
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        finish();
+                        System.exit(0);
+                    }
+                }, 1500);
                 break;
         }
+    }
+
+    private void animateIn() {
+
+        butSP.animate().alpha(1).setDuration(200).start();
+        butMP.animate().alpha(1).setDuration(400).start();
+        butSettings.animate().alpha(1).setDuration(600).start();
+        butExit.animate().alpha(1).setDuration(800).start();
+        title.animate().translationY(0).setDuration(600).start();
     }
 }
