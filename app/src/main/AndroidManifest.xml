@@ -28,7 +28,8 @@
             android:theme="@style/Transparent" />
 
         <activity
-            android:name=".Game" />
+            android:name=".Game"
+            android:screenOrientation="landscape" />
     </application>
 
 </manifest>

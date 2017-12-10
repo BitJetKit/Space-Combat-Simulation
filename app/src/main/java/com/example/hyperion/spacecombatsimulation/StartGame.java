@@ -1,8 +1,6 @@
 package com.example.hyperion.spacecombatsimulation;
 
-import android.animation.LayoutTransition;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,7 +21,6 @@ import java.util.List;
 import com.example.hyperion.spacecombatsimulation.Space.Sector;
 import com.example.hyperion.spacecombatsimulation.Ship.ShipClass;
 
-
 public class StartGame extends Activity {
 
     static List<Sector> maps = new ArrayList<>();
@@ -31,20 +28,22 @@ public class StartGame extends Activity {
     static Sector selectedMap;
     static ShipClass selectedShip;
     private RecyclerView recyclerView;
-    private LayoutTransition layoutTransition;
+    //private ViewGroup containerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (ships.isEmpty()) {
-            createMapLayout();
-            Log.d("debug", "Creating map layout");
-        } else {
-            createShipLayout();
-            Log.d("debug", "Creating ship layout");
-        }
+        Log.d("StartGame", "selectedMap: " + selectedMap + " selectedShip: " + selectedShip +"\n"+
+              "maps size: " + maps.size() + " ships size: " + ships.size());
 
+        if (ships.isEmpty() || selectedMap == null)
+            createMapLayout();
+        else
+            createShipLayout();
+
+        //LayoutTransition transition = new LayoutTransition();
+        //recyclerView.setLayoutTransition(transition);
     }
 
     protected void createMapLayout() {
@@ -56,10 +55,11 @@ public class StartGame extends Activity {
         final Button butSelect = findViewById(R.id.butSelect);
 
         recyclerView = findViewById(R.id.recyclerView);
-        AdapterMaps adapterMaps = new AdapterMaps(maps, this, new AdapterMaps.OnItemClickListener() {
+        AdapterMaps adapterMaps = new AdapterMaps(maps, new AdapterMaps.OnItemClickListener() {
             @Override
             public void onItemClick(Sector sector) {
                 butSelect.setEnabled(true);
+                Log.d("StartGame", "Selected sector: " + sector.name);
             }
         });
         recyclerView.setAdapter(adapterMaps);
@@ -75,10 +75,11 @@ public class StartGame extends Activity {
         final Button butSelect = findViewById(R.id.butSelect);
 
         recyclerView = findViewById(R.id.recyclerView);
-        AdapterShips adapterShips = new AdapterShips(ships, this, new AdapterShips.OnItemClickListener() {
+        AdapterShips adapterShips = new AdapterShips(ships, new AdapterShips.OnItemClickListener() {
             @Override
             public void onItemClick(ShipClass ship) {
                 butSelect.setEnabled(true);
+                Log.d("StartGame", "Selected ship: " + ship.name);
             }
         });
         recyclerView.setAdapter(adapterShips);
@@ -89,7 +90,7 @@ public class StartGame extends Activity {
         switch (v.getId()) {
 
             case R.id.butSelect:
-                if (ships.isEmpty())
+                if (ships.isEmpty() || selectedShip == null)
                     createShipLayout();
                 else {
                     startActivity(new Intent(this, Game.class));
@@ -112,6 +113,7 @@ public class StartGame extends Activity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
             Main.active = true;
             ships.clear();
@@ -125,7 +127,6 @@ public class StartGame extends Activity {
 class AdapterMaps extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Sector> list = new ArrayList<>();
-    private Context context;
     private final OnItemClickListener listener;
     private ImageView lastThumb;
 
@@ -133,7 +134,7 @@ class AdapterMaps extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void onItemClick(Sector map);
     }
 
-    class MapViewHolder extends RecyclerView.ViewHolder {
+    public class MapViewHolder extends RecyclerView.ViewHolder {
 
         TextView mapName, mapScale;
         ImageView mapThumbnail;
@@ -162,9 +163,8 @@ class AdapterMaps extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    AdapterMaps(List<Sector> list, Context context, OnItemClickListener listener) {
+    AdapterMaps(List<Sector> list, OnItemClickListener listener) {
         this.list = list;
-        this.context = context;
         this.listener = listener;
     }
 
@@ -176,6 +176,7 @@ class AdapterMaps extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
         MapViewHolder viewHolder = (MapViewHolder) holder;
         viewHolder.mapName.setText(list.get(position).name);
         viewHolder.mapThumbnail.setImageResource(list.get(position).thumb);
@@ -199,7 +200,6 @@ class AdapterMaps extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 class AdapterShips extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<ShipClass> list = new ArrayList<>();
-    private Context context;
     private final OnItemClickListener listener;
     private ImageView lastThumb;
 
@@ -235,9 +235,8 @@ class AdapterShips extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    AdapterShips(List<ShipClass> list, Context context, OnItemClickListener listener) {
+    AdapterShips(List<ShipClass> list, OnItemClickListener listener) {
         this.list = list;
-        this.context = context;
         this.listener = listener;
     }
 
@@ -249,6 +248,7 @@ class AdapterShips extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
         ShipViewHolder viewHolder = (ShipViewHolder) holder;
         viewHolder.shipName.setText(list.get(position).name);
         viewHolder.shipThumbnail.setImageResource(list.get(position).image);

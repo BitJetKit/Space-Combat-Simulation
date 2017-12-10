@@ -3,26 +3,29 @@ package com.example.hyperion.spacecombatsimulation;
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
-public class DrawThread extends Thread {
+class DrawThread extends Thread {
 
     private SurfaceHolder surfaceHolder;
-    private MenuBackground surfaceView;
+    private MenuBackground menuView;
+    private GameView gameView;
     private boolean running = false;
-    private int counter = 0, delay = 50;
+    private boolean game = false;
+    private int counter = 0;
 
 
     DrawThread(SurfaceHolder surfaceHolder, MenuBackground panel) {
         this.surfaceHolder = surfaceHolder;
-        surfaceView = panel;
+        menuView = panel;
     }
 
-    DrawThread(SurfaceHolder surfaceHolder, MenuBackground panel, int delay) {
+    DrawThread(SurfaceHolder surfaceHolder, GameView panel) {
         this.surfaceHolder = surfaceHolder;
-        this.delay = delay;
-        surfaceView = panel;
+        gameView = panel;
+        gameView.setZOrderOnTop(true);
+        game = true;
     }
 
-    void setRunning(boolean running) {
+    void setRunning (boolean running) {
         this.running = running;
     }
 
@@ -30,6 +33,7 @@ public class DrawThread extends Thread {
     public void run() {
 
         long lastTime = System.currentTimeMillis();
+        int delay = 40;
 
         while (running) {
 
@@ -45,8 +49,11 @@ public class DrawThread extends Thread {
 
                 try {
                     c = surfaceHolder.lockCanvas();
-                    if (c != null)
-                        surfaceView.doDraw(c);
+                    if (c != null & game)
+                        gameView.doDraw();
+                    else if (c != null)
+                        menuView.doDraw();
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {

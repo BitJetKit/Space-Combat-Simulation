@@ -29,6 +29,8 @@
     <string name="shipThumb">Ship thumbnail</string>
     <string name="shipName">Ship name</string>
 
+    <string name="background">Background</string>
+
     <string name="fire">Fire</string>
     <string name="shield">Shield</string>
     <string name="hull">Hull</string>

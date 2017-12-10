@@ -7,12 +7,11 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-public class MenuBackground extends SurfaceView implements Callback  {
+public class MenuBackground extends SurfaceView implements SurfaceHolder.Callback  {
 
     private DrawThread thread;
     private Paint paint = new Paint();
@@ -24,36 +23,20 @@ public class MenuBackground extends SurfaceView implements Callback  {
     private int random(int min, int max) { return ThreadLocalRandom.current().nextInt(min, max); }
 
 
-    public MenuBackground(Context context) {
-        super(context);
-        init(context);
-    }
-
-    public MenuBackground(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
-    }
-
-    public MenuBackground(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(context);
-    }
-
-    protected void init(Context context) {
-
-        Log.d("Call","init");
-        getHolder().addCallback(this);
-        paint.setAntiAlias(true);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setShadowLayer(8,0,0, Color.BLUE);
-    }
+    public MenuBackground(Context context) { super(context); getHolder().addCallback(this); }
+    public MenuBackground(Context context, AttributeSet attrs) { super(context, attrs); getHolder().addCallback(this); }
+    public MenuBackground(Context context, AttributeSet attrs, int defStyle) { super(context, attrs, defStyle); getHolder().addCallback(this); }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
 
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setShadowLayer(8,0,0, Color.BLUE);
+
         width = w; height = h;
         Main.height = h;
-        Log.d("Call","surfaceChanged");
+        Log.d("Call menu","surfaceChanged");
 
         starSize = new int[starCount]; starColor = new int[starCount];
         starX = new int[starCount]; starY = new int[starCount]; starZ = new int[starCount];
@@ -73,7 +56,7 @@ public class MenuBackground extends SurfaceView implements Callback  {
         thread = new DrawThread(holder, this);
         thread.setRunning(true);
         thread.start();
-        Log.d("THREAD", "Started");
+        Log.d("Thread menu", "Started");
     }
 
     @Override
@@ -82,7 +65,7 @@ public class MenuBackground extends SurfaceView implements Callback  {
         try {
             thread.setRunning(false);
             thread.join();
-            Log.d("THREAD", "Joined");
+            Log.d("Thread menu", "Joined");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -98,7 +81,7 @@ public class MenuBackground extends SurfaceView implements Callback  {
         }
     }
 
-    protected void doDraw(Canvas canvas) {
+    protected void doDraw() {
 
         postInvalidate();
 

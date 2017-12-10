@@ -25,9 +25,10 @@ public class Main extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("POWER", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.menu);
+
+        Log.d("POWER", "onCreate");
 
         butSP = findViewById(R.id.butSP);
         butMP = findViewById(R.id.butMP);
@@ -42,6 +43,7 @@ public class Main extends Activity {
             int musicVolume = mSettings.getInt("Music volume", 50);
             mediaPlayer = MediaPlayer.create(this, resID);
             mediaPlayer.setLooping(true);
+            //mediaPlayer.prepareAsync();
 
             if (mSettings.getBoolean("Music", true)) {
                 mediaPlayer.setVolume((float) musicVolume / 100, (float) musicVolume / 100);
