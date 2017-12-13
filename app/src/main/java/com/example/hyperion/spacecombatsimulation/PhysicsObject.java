@@ -2,7 +2,7 @@ package com.example.hyperion.spacecombatsimulation;
 
 class PhysicsObject {
 
-    double velX = 0, velY = 0;
+    double velX = 0, velY = 0, velocity = 0;
     float posX, posY, angle, turn = 0;
 
     float getX() {
@@ -19,6 +19,9 @@ class PhysicsObject {
     }
     double getVelY() {
         return velY;
+    }
+    double getVelocity() {
+        return velocity;
     }
     double getTurn() {
         return turn;

@@ -28,11 +28,38 @@
     <com.example.hyperion.spacecombatsimulation.Joystick
         android:id="@+id/joystick"
         android:layout_width="140dip"
-        android:layout_height="140dip"
+        android:layout_height="170dip"
         android:layout_marginBottom="16dp"
         android:layout_marginStart="16dp"
         android:backgroundTint="@color/colorTransparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/butFire"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:onClick="button_click"
+        android:background="@drawable/fire_button"
+        android:text="@string/fire"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/textVelocity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@color/colorTransparent"
+        android:text="@string/velocity"
+        android:textColor="@color/colorAccent"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toTopOf="@+id/joystick"
+        app:layout_constraintEnd_toEndOf="@+id/joystick"
+        app:layout_constraintStart_toStartOf="@+id/joystick" />
 
 </android.support.constraint.ConstraintLayout>

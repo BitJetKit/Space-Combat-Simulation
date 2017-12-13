@@ -21,8 +21,31 @@
 
     <com.example.hyperion.spacecombatsimulation.GameView
         android:id="@+id/gameView"
-        android:backgroundTint="@color/colorTransparent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:backgroundTint="@color/colorTransparent" />
+
+    <com.example.hyperion.spacecombatsimulation.Joystick
+        android:id="@+id/joystick"
+        android:layout_width="140dip"
+        android:layout_height="170dip"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="16dp"
+        android:backgroundTint="@color/colorTransparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/butFire"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:onClick="button_click"
+        android:background="@drawable/fire_button"
+        android:text="@string/fire"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

@@ -28,10 +28,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Game context;
     public static int width, height;
     private Map<String, Bitmap> bmp;
-    private Matrix shipMatrix;
+    private Map<Ship, Matrix> shipMatrix;
     private List<Ship> ships;
     private float camX, camY;
-    private int shipWidth = 100, shipHeight = 100;
 
     private int random(int min, int max) { return ThreadLocalRandom.current().nextInt(min, max); }
 
@@ -70,6 +69,10 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             newBmp = BitmapFactory.decodeResource(getResources(), ship.getShipClass().image).copy(Bitmap.Config.ARGB_8888, true);
             bmp.put(ship.getShipClass().name, Bitmap.createScaledBitmap(newBmp, ship.getShipClass().width, ship.getShipClass().height, false));
         }
+
+        shipMatrix = new HashMap<>();
+        for (Ship ship : ships)
+            shipMatrix.put(ship, new Matrix());
     }
 
     @Override
@@ -104,9 +107,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         for (Ship ship : ships) {
             if (ship.getX() > camX - width / 2 - ship.getShipClass().width / 2  && ship.getX() < camX + width / 2 + ship.getShipClass().width / 2
-             && ship.getY() > camY - height / 2 - ship.getShipClass().height / 2 && ship.getY() < camY + height / 2 + ship.getShipClass().height / 2) {
-                canvas.drawBitmap(bmp.get(ship.getShipClass().name), shipMatrix, null);
-            }
+             && ship.getY() > camY - height / 2 - ship.getShipClass().height / 2 && ship.getY() < camY + height / 2 + ship.getShipClass().height / 2)
+                canvas.drawBitmap(bmp.get(ship.getShipClass().name), shipMatrix.get(ship), null);
         }
     }
 
@@ -163,9 +165,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         for (Ship ship : ships) {
-            shipMatrix = new Matrix();
-            shipMatrix.setRotate(ship.getAngle(), ship.getShipClass().width / 2, ship.getShipClass().height / 2);
-            shipMatrix.postTranslate(width / 2 - ship.getShipClass().width / 2 + ship.getX() - camX, height / 2 - ship.getShipClass().height / 2 + ship.getY() - camY);
+            shipMatrix.get(ship).setRotate(ship.getAngle(), ship.getShipClass().width / 2, ship.getShipClass().height / 2);
+            shipMatrix.get(ship).postTranslate(width / 2 - ship.getShipClass().width / 2 + ship.getX() - camX, height / 2 - ship.getShipClass().height / 2 + ship.getY() - camY);
         }
     }
 }

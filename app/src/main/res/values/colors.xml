@@ -19,4 +19,6 @@
     <color name="colorButtonDisabled1">#3262737a</color>
     <color name="colorButtonDisabled2">#3231373d</color>
     <color name="colorButtonText">#c8d1d1d1</color>
+    <color name="colorButtonTextPressed">#dca8dcff</color>
+    <color name="colorButtonTextDisabled">#c8737373</color>
 </resources>

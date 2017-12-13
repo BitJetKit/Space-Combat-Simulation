@@ -33,7 +33,7 @@
 
     <style name="Button" parent="@android:style/Widget.Button">
         <item name="android:background">@drawable/menu_button</item>
-        <item name="android:textColor">@color/colorButtonText</item>
+        <item name="android:textColor">@color/menu_button</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">18sp</item>
         <item name="android:shadowColor">#677fa9</item>

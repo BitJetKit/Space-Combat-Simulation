@@ -4,26 +4,34 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.database.CursorJoiner;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Game extends Activity implements SensorEventListener {
 
+    private com.example.hyperion.spacecombatsimulation.Joystick joystick;
     private Space.Sector sector;
     private GameThread thread;
     private List<Ship> ships = new ArrayList<>();
+    private List<Projectile> projectiles = new ArrayList<>();
     private float camX, camY, joyX, joyY, yaw;
     private SensorManager sm;
+    private TextView textVelocity;
+    private boolean vertical;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +39,7 @@ public class Game extends Activity implements SensorEventListener {
         setContentView(R.layout.game);
 
         SharedPreferences mSettings = getSharedPreferences("Settings", Context.MODE_PRIVATE);
-        boolean vertical = mSettings.getBoolean("Vertical", false);
+        vertical = mSettings.getBoolean("Vertical", false);
         if (!vertical)
             this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         else
@@ -39,25 +47,39 @@ public class Game extends Activity implements SensorEventListener {
 
         sector = StartGame.selectedMap;
         ships.add(new Ship(StartGame.selectedShip, 0, 0, 0));
-        //ships.add(new Ship(Ship.ShipClass.Shuttle, 1000, 1000, 10));
-        //ships.add(new Ship(Ship.ShipClass.Starfighter, 500, -1500, 48));
-        //ships.add(new Ship(Ship.ShipClass.Shuttle, 200, 800, 190));
-        camX = ships.get(0).getX();
-        camY = ships.get(0).getY();
+        ships.add(new Ship(Ship.ShipClass.Shuttle, 100, 100, 10));
+        ships.add(new Ship(Ship.ShipClass.Shuttle, -250, -20, 48));
+        ships.add(new Ship(Ship.ShipClass.Starfighter, 200, 300, 190));
+        camX = ships.get(1).getX();
+        camY = ships.get(1).getY();
 
         ImageView background = findViewById(R.id.background);
         background.setImageResource(sector.background);
 
+        textVelocity = findViewById(R.id.textVelocity);
+
         sm = (SensorManager) getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
+
+        joystick = findViewById(R.id.joystick);
 
         thread = new GameThread(20, this);
         thread.setRunning(true);
         thread.start();
         Log.d("Thread game", "Started");
+
+        // Set velocity
+        final Handler mainHandler = new Handler(Looper.getMainLooper());
+        mainHandler.post(new Runnable(){
+            public void run() {
+                textVelocity.setText(String.format(Locale.getDefault(), "%.2f m/s", ships.get(0).getVelocity()));
+                mainHandler.postDelayed(this, 50);
+            }
+        });
     }
 
     public void update() {
         boolean playerShip = true;
+
         for (Ship ship : ships) {
             if (playerShip) {
                 ship.move(joyY, joyX, yaw);
@@ -68,17 +90,43 @@ public class Game extends Activity implements SensorEventListener {
         }
     }
 
+
+    public void button_click(View v) {
+
+        switch (v.getId()) {
+
+            case R.id.butFire:
+                //projectiles.add(new Projectile(Projectile.ProjectileType.Type1, ships.get(0).getX(), ships.get(0).getY(), ships.get(0).getAngle()));
+                ships.get(0).fire();
+                break;
+        }
+    }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            yaw = event.values[1];
+            if (!vertical) {
+                yaw = event.values[1];
 
-            // Limiter
-            if (yaw < -5) yaw = -5; else if (yaw > 5) yaw = 5;
+                // Limiter
+                if (yaw < -5) yaw = -5;
+                else if (yaw > 5) yaw = 5;
+
+                // Deadzone
+                if (yaw < 0.5 && yaw > -0.5) yaw = 0;
+
+            } else {
+                yaw = -event.values[0];
+
+                // Limiter
+                if (yaw < -5) yaw = -5;
+                else if (yaw > 5) yaw = 5;
+
+                // Deadzone
+                if (yaw < 0.5 && yaw > -0.5) yaw = 0;
+            }
             yaw = yaw / 5;
-
-            // Deadzone
-            if (yaw < 0.1 && yaw > -0.1) yaw = 0;
+            joystick.invalidate();
         }
     }
 
@@ -92,8 +140,14 @@ public class Game extends Activity implements SensorEventListener {
         sm.registerListener(this, sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
     }
 
+    public Ship getPlayerShip() {
+        return ships.get(0);
+    }
     public List<Ship> getShips() {
         return ships;
+    }
+    public List<Projectile> getProjectiles() {
+        return projectiles;
     }
     public Space.Sector getSector() {
         return sector;
@@ -109,6 +163,9 @@ public class Game extends Activity implements SensorEventListener {
     }
     public float getJoyY() {
         return joyY;
+    }
+    public float getYaw() {
+        return yaw;
     }
 
     public void setCamX(float camX) {
@@ -137,6 +194,7 @@ public class Game extends Activity implements SensorEventListener {
             thread.setRunning(false);
             thread.join();
             Log.d("Thread game", "Joined");
+            sm.unregisterListener(this);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

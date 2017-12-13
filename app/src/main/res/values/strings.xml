@@ -35,4 +35,5 @@
     <string name="shield">Shield</string>
     <string name="hull">Hull</string>
     <string name="energy">Energy</string>
+    <string name="velocity">Velocity</string>
 </resources>

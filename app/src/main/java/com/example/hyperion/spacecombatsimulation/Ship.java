@@ -3,19 +3,19 @@ package com.example.hyperion.spacecombatsimulation;
 import android.util.Log;
 import java.lang.reflect.Field;
 
-class Ship extends PhysicsObject{
+class Ship extends PhysicsObject {
 
     public enum ShipClass {
 
         Starfighter ("Starfighter", "starfighter", 200, 200,
-                30, 4, 0.11f,      // maxVel, maxTurn, turnRate
+                30, 4, 0.11f,         // maxVel, maxTurn, turnRate
                 0.22f, 0.12f, 0.15f, // maxThrust, strafe, reverse
-                100, 1, 100,       // shield, shieldRate, hull
-                10, 10),          // damage, energy
+                100, 1, 100,        // shield, shieldRate, hull
+                10, 10),           // damage, energy
 
         Shuttle ("Shuttle", "shuttle", 130, 200,
-                50, 2, 0.04f,
-                0.25f, 0.06f, 0.12f,
+                50, 2, 0.03f,
+                0.2f, 0.05f, 0.12f,
                 80, 1, 80,
                 9, 12);
 
@@ -84,10 +84,11 @@ class Ship extends PhysicsObject{
         }
 
         // Speed limit
-        double velocity = Math.sqrt(Math.pow(Math.abs(velX), 2) + Math.pow(Math.abs(velY), 2));
+        velocity = Math.sqrt(Math.pow(Math.abs(velX), 2) + Math.pow(Math.abs(velY), 2));
         if (velocity > shipClass.maxVelocity) {
             velX = velX * shipClass.maxVelocity / velocity;
             velY = velY * shipClass.maxVelocity / velocity;
+            velocity = shipClass.maxVelocity;
         }
 
         // Automatic stop
@@ -109,6 +110,11 @@ class Ship extends PhysicsObject{
         posY += velY;
         angle += turn;
         angle = (angle + 360) % 360;
+    }
+
+    void fire() {
+
+
     }
     
     ShipClass getShipClass() {
