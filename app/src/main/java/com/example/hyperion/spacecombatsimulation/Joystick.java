@@ -149,8 +149,6 @@ public class Joystick extends SurfaceView implements SurfaceHolder.Callback, Vie
             // Turn indicator
             //canvas.drawLine(radius + (radius + 15) * (float) Math.cos(turn), centerY - (radius + 15) * (float) Math.sin(turn),
             //                radius + (radius + 5) * (float) Math.cos(turn),  centerY - (radius + 5) * (float) Math.sin(turn), paint);
-            Log.d("turn", turn+"");
-            //canvas.drawOval(new RectF(radius, 50, 150, 200), paint);
         }
     }
 }

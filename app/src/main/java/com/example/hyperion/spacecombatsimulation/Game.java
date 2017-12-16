@@ -18,11 +18,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 public class Game extends Activity implements SensorEventListener {
 
+    private com.example.hyperion.spacecombatsimulation.GameView gameView;
     private com.example.hyperion.spacecombatsimulation.Joystick joystick;
     private Space.Sector sector;
     private GameThread thread;
@@ -50,6 +52,7 @@ public class Game extends Activity implements SensorEventListener {
         ships.add(new Ship(Ship.ShipClass.Shuttle, 100, 100, 10));
         ships.add(new Ship(Ship.ShipClass.Shuttle, -250, -20, 48));
         ships.add(new Ship(Ship.ShipClass.Starfighter, 200, 300, 190));
+        //projectiles.add(new Projectile(Projectile.ProjectileType.Type1, 0, -100, 190));
         camX = ships.get(1).getX();
         camY = ships.get(1).getY();
 
@@ -60,6 +63,7 @@ public class Game extends Activity implements SensorEventListener {
 
         sm = (SensorManager) getApplicationContext().getSystemService(Context.SENSOR_SERVICE);
 
+        gameView = findViewById(R.id.gameView);
         joystick = findViewById(R.id.joystick);
 
         thread = new GameThread(20, this);
@@ -78,8 +82,8 @@ public class Game extends Activity implements SensorEventListener {
     }
 
     public void update() {
-        boolean playerShip = true;
 
+        boolean playerShip = true;
         for (Ship ship : ships) {
             if (playerShip) {
                 ship.move(joyY, joyX, yaw);
@@ -88,16 +92,40 @@ public class Game extends Activity implements SensorEventListener {
                 playerShip = false;
             }
         }
-    }
 
+
+        Iterator<Projectile> projectileIterator = projectiles.iterator();
+        while (projectileIterator.hasNext()) {
+            Projectile projectile = projectileIterator.next();
+            projectile.move();
+            if (projectile.canRemove()) {
+                projectileIterator.remove();
+                Log.d("debug","removed one projectile");
+            }
+        }
+
+        /*
+        for (Projectile projectile : projectiles) {
+            projectile.move();
+            if (projectile.canRemove()) {
+                //gameView.removeObject(projectile);
+                projectiles.remove(projectile);
+                Log.d("debug","removed one projectile " + projectile.getAngle());
+            }
+        }*/
+    }
 
     public void button_click(View v) {
 
         switch (v.getId()) {
 
             case R.id.butFire:
-                //projectiles.add(new Projectile(Projectile.ProjectileType.Type1, ships.get(0).getX(), ships.get(0).getY(), ships.get(0).getAngle()));
-                ships.get(0).fire();
+                if (ships.get(0).fire()) {
+                    projectiles.add(new Projectile(Projectile.ProjectileType.Type1, ships.get(0).getBarrelX(), ships.get(0).getBarrelY(), ships.get(0).getAngle()));
+                    gameView.addObject(projectiles.get(projectiles.size() - 1));
+                    Log.d("barrel X", ships.get(0).getBarrelX()+"");
+                    Log.d("barrel Y", ships.get(0).getBarrelY()+"");
+                }
                 break;
         }
     }
@@ -187,6 +215,7 @@ public class Game extends Activity implements SensorEventListener {
     public void moveCamY(float changeY) {
         this.camY += changeY;
     }
+
 
     protected void onDestroy() {
         super.onDestroy();

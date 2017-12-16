@@ -15,7 +15,7 @@ class Ship extends PhysicsObject {
 
         Shuttle ("Shuttle", "shuttle", 130, 200,
                 50, 2, 0.03f,
-                0.2f, 0.05f, 0.12f,
+                0.16f, 0.05f, 0.1f,
                 80, 1, 80,
                 9, 12);
 
@@ -42,6 +42,7 @@ class Ship extends PhysicsObject {
     }
 
     private final ShipClass shipClass;
+    private float angleRad;
 
 
     Ship(ShipClass shipClass, float posX, float posY, float angle) {
@@ -51,7 +52,7 @@ class Ship extends PhysicsObject {
 
     void move(float accelerationLongitudinal, float accelerationLateral, float accelerationAngular) {
 
-        float angleRad = (float) (angle * Math.PI / 180);
+        angleRad = getAngleRad();
 
         // Movement
         if (accelerationLongitudinal < 0) {
@@ -112,9 +113,16 @@ class Ship extends PhysicsObject {
         angle = (angle + 360) % 360;
     }
 
-    void fire() {
+    boolean fire() {
 
+        return true;
+    }
 
+    float getBarrelX() {
+        return posX + (float) Math.sin(angleRad) * 100;
+    }
+    float getBarrelY() {
+        return posY - (float) Math.cos(angleRad) * 100;
     }
     
     ShipClass getShipClass() {

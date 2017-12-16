@@ -27,9 +27,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private int dustCount, sectorColor, dustDepth = 10;
     private Game context;
     public static int width, height;
-    private Map<String, Bitmap> bmp;
+    private Map<String, Bitmap> shipBmp;
     private Map<Ship, Matrix> shipMatrix;
+    private Map<String, Bitmap> projectileBmp;
+    private Map<Projectile, Matrix> projectileMatrix;
     private List<Ship> ships;
+    private List<Projectile> projectiles;
     private float camX, camY;
 
     private int random(int min, int max) { return ThreadLocalRandom.current().nextInt(min, max); }
@@ -61,41 +64,31 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             dustColor[i] = Color.argb(random(1, Color.alpha(sectorColor)), Color.red(sectorColor), Color.green(sectorColor), Color.blue(sectorColor));
         }
 
+
+        // REMAKE THIS AND PROJECTILES INTO ARRAY LISTS INSTEAD OF MAPS (cannot index by shipClass name if more ships have the same class but unique looks)
+
         ships = context.getShips();
-
-        bmp = new HashMap<>();
+        shipBmp = new HashMap<>(); shipMatrix = new HashMap<>();
         for (Ship ship : ships) {
-            Bitmap newBmp;
-            newBmp = BitmapFactory.decodeResource(getResources(), ship.getShipClass().image).copy(Bitmap.Config.ARGB_8888, true);
-            bmp.put(ship.getShipClass().name, Bitmap.createScaledBitmap(newBmp, ship.getShipClass().width, ship.getShipClass().height, false));
-        }
-
-        shipMatrix = new HashMap<>();
-        for (Ship ship : ships)
+            Bitmap newBmp = BitmapFactory.decodeResource(getResources(), ship.getShipClass().image).copy(Bitmap.Config.ARGB_8888, true);
+            shipBmp.put(ship.getShipClass().name, Bitmap.createScaledBitmap(newBmp, ship.getShipClass().width, ship.getShipClass().height, false));
             shipMatrix.put(ship, new Matrix());
-    }
-
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-
-        setWillNotDraw(true);
-        thread = new DrawThread(holder, this);
-        thread.setRunning(true);
-        thread.start();
-        Log.d("Thread game view", "Started");
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-
-        try {
-            thread.setRunning(false);
-            thread.join();
-            Log.d("Thread game view", "Joined");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
+
+        projectiles = context.getProjectiles();
+        projectileBmp = new HashMap<>(); projectileMatrix = new HashMap<>();
     }
+
+    public void addObject(Projectile projectile) {
+        Bitmap newBmp = BitmapFactory.decodeResource(getResources(), projectile.getType().image).copy(Bitmap.Config.ARGB_8888, true);
+        projectileBmp.put(projectile.getType().name, Bitmap.createScaledBitmap(newBmp, projectile.getType().width, projectile.getType().height, false));
+        projectileMatrix.put(projectile, new Matrix());
+    }
+
+    public void removeObject(Projectile projectile) {
+        projectileMatrix.remove(projectile);
+    }
+
 
     @Override
     public void onDraw(Canvas canvas) {
@@ -105,10 +98,18 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             canvas.drawCircle((float) dustX[i] / dustDepth, (float) dustY[i] / dustDepth, dustSize[i], paint);
         }
 
+        if (!projectiles.isEmpty()) {
+            for (Projectile projectile : projectiles) {
+                if (projectile.getX() > camX - width / 2 - projectile.getType().width / 2 && projectile.getX() < camX + width / 2 + projectile.getType().width / 2
+                        && projectile.getY() > camY - height / 2 - projectile.getType().height / 2 && projectile.getY() < camY + height / 2 + projectile.getType().height / 2)
+                    canvas.drawBitmap(projectileBmp.get(projectile.getType().name), projectileMatrix.get(projectile), null);
+            }
+        }
+
         for (Ship ship : ships) {
             if (ship.getX() > camX - width / 2 - ship.getShipClass().width / 2  && ship.getX() < camX + width / 2 + ship.getShipClass().width / 2
              && ship.getY() > camY - height / 2 - ship.getShipClass().height / 2 && ship.getY() < camY + height / 2 + ship.getShipClass().height / 2)
-                canvas.drawBitmap(bmp.get(ship.getShipClass().name), shipMatrix.get(ship), null);
+                canvas.drawBitmap(shipBmp.get(ship.getShipClass().name), shipMatrix.get(ship), null);
         }
     }
 
@@ -167,6 +168,33 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         for (Ship ship : ships) {
             shipMatrix.get(ship).setRotate(ship.getAngle(), ship.getShipClass().width / 2, ship.getShipClass().height / 2);
             shipMatrix.get(ship).postTranslate(width / 2 - ship.getShipClass().width / 2 + ship.getX() - camX, height / 2 - ship.getShipClass().height / 2 + ship.getY() - camY);
+        }
+
+        for (Projectile projectile : projectiles) {
+            projectileMatrix.get(projectile).setRotate(projectile.getAngle(), projectile.getType().width / 2, projectile.getType().height / 2);
+            projectileMatrix.get(projectile).postTranslate(width / 2 - projectile.getType().width / 2 + projectile.getX() - camX, height / 2 - projectile.getType().height / 2 + projectile.getY() - camY);
+        }
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+
+        setWillNotDraw(true);
+        thread = new DrawThread(holder, this);
+        thread.setRunning(true);
+        thread.start();
+        Log.d("Thread game view", "Started");
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+
+        try {
+            thread.setRunning(false);
+            thread.join();
+            Log.d("Thread game view", "Joined");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
