@@ -18,7 +18,7 @@ public class Joystick extends SurfaceView implements SurfaceHolder.Callback, Vie
     private int radius, hatRadius, rimWidth, centerY;
     private float posX, posY, joyX, joyY;
     private Paint paint = new Paint();
-    private int colorAccent;
+    private int colorAccent, colorPrimary, colorPrimaryDark, colorBackground, colorRed;
     private Game context;
     private Vibrator vibrator;
     private boolean centered = true;
@@ -71,7 +71,7 @@ public class Joystick extends SurfaceView implements SurfaceHolder.Callback, Vie
         } else if (centered)
             centered = false;
 
-        context.setJoyX(joyX); context.setJoyY(joyY);
+        context.setJoyX(joyX); context.setJoyY(-joyY);
         invalidate();
         return true;
     }
@@ -85,19 +85,27 @@ public class Joystick extends SurfaceView implements SurfaceHolder.Callback, Vie
         hatRadius = radius / 4;
         rimWidth = radius / 20;
         posX = radius; posY = centerY;
-        paint.setAntiAlias(true);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
-        Log.d("Joystick", "surfaceCreated");
         setZOrderOnTop(true);
+        paint.setAntiAlias(true);
 
-        if (android.os.Build.VERSION.SDK_INT >= 23)
-            colorAccent = getResources().getColor(R.color.colorAccent, null);
-        else
-            colorAccent = getResources().getColor(R.color.colorAccent);
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+            colorAccent = getResources().getColor(R.color.colorUIAccent, null);
+            colorPrimary = getResources().getColor(R.color.colorUIPrimary, null);
+            colorPrimaryDark = getResources().getColor(R.color.colorUIPrimaryDark, null);
+            colorBackground = getResources().getColor(R.color.colorUIBackground, null);
+            colorRed = getResources().getColor(R.color.colorUIRed, null);
+        } else {
+            colorAccent = getResources().getColor(R.color.colorUIAccent);
+            colorPrimary = getResources().getColor(R.color.colorUIPrimary);
+            colorPrimaryDark = getResources().getColor(R.color.colorUIPrimaryDark);
+            colorBackground = getResources().getColor(R.color.colorUIBackground);
+            colorRed = getResources().getColor(R.color.colorUIRed);
+        }
     }
 
     @Override
@@ -111,22 +119,27 @@ public class Joystick extends SurfaceView implements SurfaceHolder.Callback, Vie
         if (getHolder().getSurface().isValid()) {
 
             // Base
-            paint.setStyle(Paint.Style.FILL);
-            paint.setColor(Color.argb(80, 60, 60, 60));
+            paint.setStyle(Paint.Style.FILL); paint.setColor(colorBackground);
             canvas.drawCircle(radius, centerY, radius, paint);
 
             // Deadzone lines
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(5);
-            paint.setColor(Color.DKGRAY);
+            paint.setStyle(Paint.Style.STROKE); paint.setStrokeWidth(4); paint.setColor(colorPrimaryDark);
             if (joyX == 0) // Vertical
                 canvas.drawLine(radius, centerY - radius + rimWidth, radius, centerY + radius - rimWidth, paint);
             if (joyY == 0) // Horizontal
                 canvas.drawLine(rimWidth, centerY, radius * 2 - rimWidth, centerY, paint);
 
+            // Thrust direction arrow
+            if (context.getPlayerShip().getVelocity() > 0) {
+                float angle = -context.getPlayerShip().getAngleRad() + context.getPlayerShip().getAngleVel();
+                paint.setStrokeWidth(6); paint.setColor(colorRed);
+                canvas.drawLine(radius, centerY, radius + radius * (float) Math.cos(angle), centerY + radius * (float) Math.sin(angle), paint);
+                paint.setColor(colorPrimary);
+                canvas.drawLine(radius - radius * (float) Math.cos(angle), centerY - radius * (float) Math.sin(angle), radius, centerY, paint);
+            }
+
             // Rim
-            paint.setStrokeWidth(rimWidth);
-            paint.setColor(colorAccent);
+            paint.setStrokeWidth(rimWidth); paint.setColor(colorAccent);
             canvas.drawCircle(radius, centerY, (float)(radius * 0.975), paint);
 
             // Hat
@@ -135,20 +148,15 @@ public class Joystick extends SurfaceView implements SurfaceHolder.Callback, Vie
 
             // Turn arc
             paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(colorAccent);
             float turn = (float) context.getPlayerShip().getTurn() / context.getPlayerShip().getShipClass().maxTurn * 56;
             canvas.drawArc(-15, centerY - radius - 15, radius * 2 + 15, centerY + radius + 15, -90, turn, false, paint);
 
             // Yaw indicator
             float yaw = context.getYaw();
-            if (yaw != 0 && yaw != 1 && yaw != -1) paint.setColor(Color.DKGRAY);
+            if (yaw != 0 && yaw != 1 && yaw != -1) paint.setColor(colorPrimaryDark);
             yaw = -yaw + (float) Math.PI / 2;
             canvas.drawLine(radius + (radius + 25) * (float) Math.cos(yaw), centerY - (radius + 25) * (float) Math.sin(yaw),
                             radius + (radius + 5) * (float) Math.cos(yaw),  centerY - (radius + 5) * (float) Math.sin(yaw), paint);
-
-            // Turn indicator
-            //canvas.drawLine(radius + (radius + 15) * (float) Math.cos(turn), centerY - (radius + 15) * (float) Math.sin(turn),
-            //                radius + (radius + 5) * (float) Math.cos(turn),  centerY - (radius + 5) * (float) Math.sin(turn), paint);
         }
     }
 }

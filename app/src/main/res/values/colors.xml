@@ -3,6 +3,7 @@
     <color name="colorPrimary">#053661</color>
     <color name="colorPrimaryDark">#042441</color>
     <color name="colorAccent">#4c9ff2</color>
+
     <color name="colorBackground">#00071c</color>
     <color name="colorBackground1">#000414</color>
     <color name="colorBackground2">#001228</color>
@@ -21,4 +22,10 @@
     <color name="colorButtonText">#c8d1d1d1</color>
     <color name="colorButtonTextPressed">#dca8dcff</color>
     <color name="colorButtonTextDisabled">#c8737373</color>
+
+    <color name="colorUIAccent">#4c9ff2</color>
+    <color name="colorUIPrimary">#888888</color>
+    <color name="colorUIPrimaryDark">#444444</color>
+    <color name="colorUIBackground">#503c3c3c</color>
+    <color name="colorUIRed">#DD0000</color>
 </resources>

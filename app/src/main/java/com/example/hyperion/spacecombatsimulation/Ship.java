@@ -55,12 +55,12 @@ class Ship extends PhysicsObject {
         angleRad = getAngleRad();
 
         // Movement
-        if (accelerationLongitudinal < 0) {
-            this.velX += Math.cos(angleRad) * accelerationLateral * shipClass.strafe - Math.sin(angleRad) * accelerationLongitudinal * shipClass.maxThrust;
-            this.velY += Math.sin(angleRad) * accelerationLateral * shipClass.strafe + Math.cos(angleRad) * accelerationLongitudinal * shipClass.maxThrust;
+        if (accelerationLongitudinal > 0) {
+            this.velX += Math.cos(angleRad) * accelerationLateral * shipClass.strafe + Math.sin(angleRad) * accelerationLongitudinal * shipClass.maxThrust;
+            this.velY += Math.sin(angleRad) * accelerationLateral * shipClass.strafe - Math.cos(angleRad) * accelerationLongitudinal * shipClass.maxThrust;
         } else {
-            this.velX += Math.cos(angleRad) * accelerationLateral * shipClass.strafe - Math.sin(angleRad) * accelerationLongitudinal * shipClass.reverse;
-            this.velY += Math.sin(angleRad) * accelerationLateral * shipClass.strafe + Math.cos(angleRad) * accelerationLongitudinal * shipClass.reverse;
+            this.velX += Math.cos(angleRad) * accelerationLateral * shipClass.strafe + Math.sin(angleRad) * accelerationLongitudinal * shipClass.reverse;
+            this.velY += Math.sin(angleRad) * accelerationLateral * shipClass.strafe - Math.cos(angleRad) * accelerationLongitudinal * shipClass.reverse;
         }
 
         // Turning
@@ -114,8 +114,12 @@ class Ship extends PhysicsObject {
     }
 
     boolean fire() {
-
+        //move(-1,0,0);
         return true;
+    }
+
+    void hit(Projectile projectile) {
+        Log.d("debug", "hit!");
     }
 
     float getBarrelX() {
@@ -124,7 +128,9 @@ class Ship extends PhysicsObject {
     float getBarrelY() {
         return posY - (float) Math.cos(angleRad) * 100;
     }
-    
+    int getShieldRadius() {
+        return shipClass.width > shipClass.height ? shipClass.width / 2: shipClass.height / 2;
+    }
     ShipClass getShipClass() {
         return shipClass;
     }

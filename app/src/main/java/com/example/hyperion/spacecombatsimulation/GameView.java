@@ -85,10 +85,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         projectileMatrix.put(projectile, new Matrix());
     }
 
-    public void removeObject(Projectile projectile) {
-        projectileMatrix.remove(projectile);
-    }
-
 
     @Override
     public void onDraw(Canvas canvas) {
@@ -100,16 +96,16 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         if (!projectiles.isEmpty()) {
             for (Projectile projectile : projectiles) {
-                if (projectile.getX() > camX - width / 2 - projectile.getType().width / 2 && projectile.getX() < camX + width / 2 + projectile.getType().width / 2
-                        && projectile.getY() > camY - height / 2 - projectile.getType().height / 2 && projectile.getY() < camY + height / 2 + projectile.getType().height / 2)
+                if (inView(projectile))
                     canvas.drawBitmap(projectileBmp.get(projectile.getType().name), projectileMatrix.get(projectile), null);
             }
         }
 
-        for (Ship ship : ships) {
-            if (ship.getX() > camX - width / 2 - ship.getShipClass().width / 2  && ship.getX() < camX + width / 2 + ship.getShipClass().width / 2
-             && ship.getY() > camY - height / 2 - ship.getShipClass().height / 2 && ship.getY() < camY + height / 2 + ship.getShipClass().height / 2)
-                canvas.drawBitmap(shipBmp.get(ship.getShipClass().name), shipMatrix.get(ship), null);
+        if (!ships.isEmpty()) {
+            for (Ship ship : ships) {
+                if (inView(ship))
+                    canvas.drawBitmap(shipBmp.get(ship.getShipClass().name), shipMatrix.get(ship), null);
+            }
         }
     }
 
@@ -141,21 +137,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     dustY[i] = random(1, height * dustDepth);
                 }
 
-/*
-                if (dustY[i] < -dustDepth) {
-                    dustX[i] = random(1, width * dustDepth);
-                    dustY[i] += dustY[i];
-                } else if (dustY[i] > height * dustDepth + dustDepth) {
-                    dustX[i] = random(1, width * dustDepth);
-                    dustY[i] -= dustY[i];
-                } else if (dustX[i] < -dustDepth) {
-                    dustX[i] += dustX[i];
-                    dustY[i] = random(1, height * dustDepth);
-                } else {
-                    dustX[i] -= dustX[i];
-                    dustY[i] = random(1, height * dustDepth);
-                }*/
-
                 dustZ[i] = Math.max(1, Math.min(dustDepth * 2, dustZ[i] + random(-3, 3)));
                 dustSize[i] = random(1, 3);
                 dustColor[i] = Color.argb(random(1, Color.alpha(sectorColor)), Color.red(sectorColor), Color.green(sectorColor), Color.blue(sectorColor));
@@ -166,14 +147,27 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
 
         for (Ship ship : ships) {
-            shipMatrix.get(ship).setRotate(ship.getAngle(), ship.getShipClass().width / 2, ship.getShipClass().height / 2);
-            shipMatrix.get(ship).postTranslate(width / 2 - ship.getShipClass().width / 2 + ship.getX() - camX, height / 2 - ship.getShipClass().height / 2 + ship.getY() - camY);
+            if (inView(ship)) {
+                shipMatrix.get(ship).setRotate(ship.getAngle(), ship.getShipClass().width / 2, ship.getShipClass().height / 2);
+                shipMatrix.get(ship).postTranslate(width / 2 - ship.getShipClass().width / 2 + ship.getX() - camX, height / 2 - ship.getShipClass().height / 2 + ship.getY() - camY);
+            }
         }
 
         for (Projectile projectile : projectiles) {
-            projectileMatrix.get(projectile).setRotate(projectile.getAngle(), projectile.getType().width / 2, projectile.getType().height / 2);
-            projectileMatrix.get(projectile).postTranslate(width / 2 - projectile.getType().width / 2 + projectile.getX() - camX, height / 2 - projectile.getType().height / 2 + projectile.getY() - camY);
+            if (inView(projectile)) {
+                projectileMatrix.get(projectile).setRotate(projectile.getAngle(), projectile.getType().width / 2, projectile.getType().height / 2);
+                projectileMatrix.get(projectile).postTranslate(width / 2 - projectile.getType().width / 2 + projectile.getX() - camX, height / 2 - projectile.getType().height / 2 + projectile.getY() - camY);
+            }
         }
+    }
+
+    private boolean inView(Projectile projectile) {
+        return projectile.getX() > camX - width / 2  - projectile.getType().width / 2  && projectile.getX() < camX + width / 2  + projectile.getType().width / 2
+            && projectile.getY() > camY - height / 2 - projectile.getType().height / 2 && projectile.getY() < camY + height / 2 + projectile.getType().height / 2;
+    }
+    private boolean inView(Ship ship) {
+        return ship.getX() > camX - width / 2  - ship.getShipClass().width / 2  && ship.getX() < camX + width / 2  + ship.getShipClass().width / 2
+            && ship.getY() > camY - height / 2 - ship.getShipClass().height / 2 && ship.getY() < camY + height / 2 + ship.getShipClass().height / 2;
     }
 
     @Override

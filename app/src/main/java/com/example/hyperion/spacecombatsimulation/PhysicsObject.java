@@ -17,6 +17,9 @@ class PhysicsObject {
     float getAngleRad() {
         return (float) (angle * Math.PI / 180);
     }
+    float getAngleVel() {
+        return (float) (Math.atan2(velY, velX));
+    }
     double getVelX() {
         return velX;
     }

@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -93,26 +94,29 @@ public class Game extends Activity implements SensorEventListener {
             }
         }
 
-
         Iterator<Projectile> projectileIterator = projectiles.iterator();
         while (projectileIterator.hasNext()) {
-            Projectile projectile = projectileIterator.next();
-            projectile.move();
-            if (projectile.canRemove()) {
-                projectileIterator.remove();
-                Log.d("debug","removed one projectile");
+            try {
+                Projectile projectile = projectileIterator.next();
+                projectile.move();
+
+                boolean hit = false;
+                for (Ship ship : ships) {
+                    if (projectile.inBounds(ship) && ship != ships.get(0)) {
+                        ship.hit(projectile);
+                        projectileIterator.remove();
+                        hit = true;
+                        break;
+                    }
+                }
+                if(hit) break;
+
+                if (projectile.canRemove())
+                    projectileIterator.remove();
+            } catch (ConcurrentModificationException e) {
+                Log.e("Game", "ConcurrentModificationException!");
             }
         }
-
-        /*
-        for (Projectile projectile : projectiles) {
-            projectile.move();
-            if (projectile.canRemove()) {
-                //gameView.removeObject(projectile);
-                projectiles.remove(projectile);
-                Log.d("debug","removed one projectile " + projectile.getAngle());
-            }
-        }*/
     }
 
     public void button_click(View v) {
@@ -121,10 +125,8 @@ public class Game extends Activity implements SensorEventListener {
 
             case R.id.butFire:
                 if (ships.get(0).fire()) {
-                    projectiles.add(new Projectile(Projectile.ProjectileType.Type1, ships.get(0).getBarrelX(), ships.get(0).getBarrelY(), ships.get(0).getAngle()));
+                    projectiles.add(new Projectile(Projectile.ProjectileType.Type1, ships.get(0)));
                     gameView.addObject(projectiles.get(projectiles.size() - 1));
-                    Log.d("barrel X", ships.get(0).getBarrelX()+"");
-                    Log.d("barrel Y", ships.get(0).getBarrelY()+"");
                 }
                 break;
         }
@@ -166,6 +168,19 @@ public class Game extends Activity implements SensorEventListener {
     public void onResume() {
         super.onResume();
         sm.registerListener(this, sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_GAME);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            Main.active = true;
+            StartGame.selectedMap = null;
+            StartGame.selectedShip = null;
+            StartGame.ships.clear();
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     public Ship getPlayerShip() {
@@ -216,7 +231,6 @@ public class Game extends Activity implements SensorEventListener {
         this.camY += changeY;
     }
 
-
     protected void onDestroy() {
         super.onDestroy();
         try {
@@ -227,19 +241,6 @@ public class Game extends Activity implements SensorEventListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            Main.active = true;
-            StartGame.selectedMap = null;
-            StartGame.selectedShip = null;
-            StartGame.ships.clear();
-            finish();
-        }
-        return super.onKeyDown(keyCode, event);
     }
 
     @Override
